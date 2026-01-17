@@ -1,0 +1,10 @@
+#explanation {display:inline-block}
+#tournament_graph {display:inline-block}
+#ms_graph {display:inline-block}
+#struct_graph {display:inline-block}
+
+#struct_graph2 {
+  position: absolute;
+  left: -10000px;
+  top: -10000px;
+}

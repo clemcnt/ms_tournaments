@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+    /* Set the size of the graph container */
+    #tournament_graph, #ms_graph, #struct_graph, #struct_graph2 {
+      width: 300px;
+      height: 300px;
+      border: 1px solid black;
+    }
+  </style>
+</head>
+<body>
+    <div id="dimensions">
+        <input type="number" id="voters" placeholder="# Voters" min="1">
+        <input type="number" id="candidates" placeholder="# Candidates" min="2">
+        <button id="createBtn">Create Profile</button>
+    </div>
+
+    <div id="profile">
+    </div>
+    <button id="loadBtn">Load Profile</button>
+    <button id="rdmFillBtn">Fill Randomly</button>
+    <div id="rules">
+    </div>
+    <button id="computeWinnersBtn">Compute Winners</button>
+    <div id="winners">
+    </div>
+    <button id="explainBtn">Generate Explanation</button>
+    <div id="explanation">
+    </div>
+    <div id="tournament_graph">
+    </div>
+    <div id="ms_graph">
+    </div>
+    <div id="struct_graph">
+    </div>
+    <div id="struct_graph2">
+    </div>
+    <script type="module" src="index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highs/build/highs.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.23.0/dist/cytoscape.min.js"></script>
+</body>
+</html>
