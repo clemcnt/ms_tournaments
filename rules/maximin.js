@@ -8,7 +8,7 @@ constructor(profile) {
 }
 
 
-winners() {
+async winners() {
     let scores = new Array(this.n_candidates).fill(0);
 
     function non_w_min(l,w) {
@@ -34,7 +34,7 @@ winners() {
     for (let i=0; i< this.n_candidates; i++) {
         scores[i] = non_w_min(this.profile[i],i);
     }
-    console.log(JSON.stringify(scores));
+    // console.log(JSON.stringify(scores));
 
     function argmaxl(l) {
         if (l.length == 0) {
@@ -63,9 +63,9 @@ winners() {
 }
 
 
-minimal_support() {
+async minimal_support() {
     if (!this._winners){
-        this._winners = this._winners(this.profile);
+        this._winners = await this._winners(this.profile);
     }
     let ms = [...Array(this.n_candidates)].map(_=>Array(this.n_candidates).fill(0));
 
@@ -112,13 +112,13 @@ minimal_support() {
     }
 
     this.ms = ms;
-    console.log(JSON.stringify(ms));
+    // console.log(JSON.stringify(ms));
     return ms;
 }
 
-structure() {
+async structure() {
     if (this.ms === undefined){
-        this.ms = this.minimal_support();
+        this.ms = await this.minimal_support();
     }
 
     function non_w_min(l,w) {
@@ -168,15 +168,14 @@ structure() {
 }
 
 
-explanation() {
-    this._structure = this.structure();
-    console.log(this._structure);
+async explanation() {
+    this._structure = await this.structure();
 
     let explanation = [];
     explanation.push(this._focus + " is a Maximin winner because: ");
-    console.log(JSON.stringify(this._structure));
+    // console.log(JSON.stringify(this._structure));
     let min = Math.min(...this._structure[this._focus][1]);
-    console.log(min);
+    // console.log(min);
 
     function displayMin(l) {
         var text = "min(";

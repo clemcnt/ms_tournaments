@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Minimal Supports</title>
     <link rel="stylesheet" href="styles.css">
     <style>
     /* Set the size of the graph container */
@@ -12,37 +12,211 @@
       height: 300px;
       border: 1px solid black;
     }
+
+    :root {
+      --primary: #4f46e5;
+      --bg: #f9fafb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --border: #e5e7eb;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Inter", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    header {
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+      color: var(--primary);
+    }
+
+    header p {
+      margin-top: 0.5rem;
+      color: #6b7280;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 1rem;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .flex {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    input[type="number"] {
+      padding: 0.5rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      width: 60px;
+    }
+
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #4338ca;
+    }
+
+    table {
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    td {
+      border: 1px solid var(--border);
+      text-align: center;
+      width: 40px;
+      height: 40px;
+    }
+
+    td input {
+      width: 50px;
+      border: none;
+      text-align: center;
+    }
+
+    fieldset {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+    }
+
+    legend {
+      font-weight: bold;
+    }
+
+    textarea {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      padding: 1rem;
+      resize: vertical;
+      font-family: monospace;
+    }
+
+    .graphs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .graph-box {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      height: 250px;
+      background: white;
+    }
+
+    .matrix-graph-row {
+      display: flex;
+      gap: 2rem;
+      align-items: flex-start;
+    }
+
+    #profile {
+      flex: 1; /* takes remaining space */
+    }
+
+    #tournament_graph {
+      width: 300px;
+      height: 300px;
+      flex-shrink: 0; /* prevents shrinking */
+    }
   </style>
 </head>
 <body>
-    <div id="dimensions">
-        <input type="number" id="voters" placeholder="# Voters" min="1">
-        <input type="number" id="candidates" placeholder="# Candidates" min="2">
-        <button id="createBtn">Create Profile</button>
-    </div>
 
-    <div id="profile">
-    </div>
+  <header>
+  <h1>Explaining Tournament Solutions with Minimal Supports</h1>
+  <p><strong>
+    Experimental</strong> webpage to play with minimal supports which were introduced in our paper
+    <a href="https://www.researchgate.net/publication/402629737_Explaining_Tournament_Solutions_with_Minimal_Supports">Explaining Tournament Solutions with Minimal Supports</a> published at AAAI-26.<br>
+    The extended version of the paper is freely available at <a href="https://arxiv.org/abs/2509.09312">https://arxiv.org/abs/2509.09312</a>.
+  </p>
+  </header>
+
+  <div class="container">
+
+  <!-- Profile -->
+  <div class="card">
+  <h3>Preference Profile</h3>
+
+    <input type="number" id="voters" placeholder="# Voters" min="1">
+    <input type="number" id="candidates" placeholder="# Candidates" min="2">
+    <button id="createBtn">Create Profile</button>
+    <button id="rdmFillBtn">Random Fill</button>
     <button id="loadBtn">Load Profile</button>
-    <button id="rdmFillBtn">Fill Randomly</button>
+
+  <div class="matrix-graph-row">
+    <div id="profile"></div>
+    <div id="tournament_graph" class="graph-box"></div>
+  </div>
+
+</div>
+
+  <!-- Rules -->
+  <div class="card">
     <div id="rules">
     </div>
-    <button id="computeWinnersBtn">Compute Winners</button>
+  </div>
+
+  <!-- Winners -->
+  <div class="card">
     <div id="winners">
     </div>
-    <button id="explainBtn">Generate Explanation</button>
-    <div id="explanation">
-    </div>
-    <div id="tournament_graph">
-    </div>
-    <div id="ms_graph">
-    </div>
-    <div id="struct_graph">
-    </div>
-    <div id="struct_graph2">
-    </div>
-    <script type="module" src="index.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/highs/build/highs.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.23.0/dist/cytoscape.min.js"></script>
+  </div>
+
+  <!-- Explanation -->
+  <div class="card">
+    <h3>Explanation</h3>
+    <div class="graphs">
+      <div id="explanation">
+      </div>
+      <div id="ms_graph" class="graph-box"></div>
+      <div id="struct_graph" class="graph-box"></div>
+      <div id="struct_graph2" class="graph-box"></div>
+  </div>
+
+  
+
+</div>
+<script type="module" src="index.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highs/build/highs.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/cytoscape@3.23.0/dist/cytoscape.min.js"></script>
 </body>
+
+<footer>
+  <p>Website developped by <a href="https://www.irit.fr/~Clement.Contet/">Clément Contet</a> without the use of generative AI apart from the creation of CSS style of this page. Last updated 2026/03/24.</p>
+  <p>If you find any bug or have any question fill free to reach to me :)</p>
+</footer>
 </html>

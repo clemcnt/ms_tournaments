@@ -12,11 +12,11 @@ winners() {
         for (let v = 0; v < n; v++) {
             if (p[u][v]==1) {
                 visited[v] = true;
-                console.log(`visited ${v}`);
+                // console.log(`visited ${v}`);
                 for (let w = 0; w < n; w++) {
                     if (p[v][w]==1 && !visited[w]) {
                         visited[w] = true;
-                        console.log(`visited ${w} by ${v}`);
+                        // console.log(`visited ${w} by ${v}`);
                     }
                 }
             }
@@ -26,23 +26,23 @@ winners() {
     var uncovered;
 
     for (let i = 0; i < this.n_candidates; i++) {
-        console.log(i)
+        // console.log(i)
         visited = new Array(this.n_candidates).fill(false);
         update(i, this.n_candidates,this.profile);
-        console.log(visited)
+        // console.log(visited)
         uncovered = true;
         let j = 0;
         while (j < this.n_candidates && uncovered) {
             uncovered = visited[j];
             j++;
         }
-        console.log(uncovered)
+        // console.log(uncovered)
         if (uncovered) { 
             winners.push(i)
         }
     }
     this._winners = winners;
-    console.log(winners)
+    // console.log(winners)
     return winners;
 }
 

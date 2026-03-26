@@ -153,7 +153,7 @@ minimal_support() {
     }
 
     this.ms = ms;
-    console.log(JSON.stringify(ms));
+    // console.log(JSON.stringify(ms));
     return ms;
 }
 
@@ -188,7 +188,7 @@ structure() {
 
 explanation() {
     this._structure = this.structure();
-    console.log(this._structure);
+    // console.log(this._structure);
 
     function displaySum(l) {
         var text = "";

@@ -59,7 +59,7 @@ async minimal_support() {
     
     for (let i=0; i<this.n_candidates; i++) {
         for (let j=0; j<this.n_candidates; j++) {
-            ms_entries_name[i].push("ms"+i+j);
+            ms_entries_name[i].push("ms"+i+"_"+j);
         }
     }
 
@@ -67,7 +67,7 @@ async minimal_support() {
     
     for (let i=0; i<this.n_candidates; i++) {
         for (let j=0; j<this.n_candidates; j++) {
-            paths[i].push("path"+i+j);
+            paths[i].push("path"+i+"_"+j);
         }
     }
 
@@ -76,9 +76,9 @@ async minimal_support() {
     for (let i=0; i<this.n_candidates; i++) {
         // make binary variables for each path
         let temp = model.addVars(paths[i], {vtype: "BINARY"});
-        console.log(temp);
+        // console.log(temp);
         used.push(paths[i].map((j) => temp[j]));
-        console.log(used);
+        // console.log(used);
 
         // make variables for each entry of ms
         for (let j=0; j<this.n_candidates; j++) {
@@ -94,8 +94,8 @@ async minimal_support() {
 
         for (let j=0; j<this.n_candidates; j++) {
             // link used and entries for candidate i, used[j][i] = 1 iff ms[i][j]>0
-            console.log(entries[i][j]);
-            console.log(used[j][i]);
+            // console.log(entries[i][j]);
+            // console.log(used[j][i]);
             model.addConstr([entries[i][j]], "<=", [[this.n_voters, used[j][i]]]);
 
             // path must either be mu(w,c) >= ceil(n/2) or mu(w,c') + mu(c',c) >= n+1
@@ -113,15 +113,15 @@ async minimal_support() {
     // model.setObjective(entries.flat(), "MINIMIZE");
     // Add a second constraint with a small delta to maximize the weight of the w out-edges in case of equality in the sum of entries
     model.setObjective(entries.flat().concat(entries[this._focus].map((i) => [-1/(this.n_candidates+1), i])), "MINIMIZE");
-    console.log(model.toLPFormat());
+    // console.log(model.toLPFormat());
 
     const highs = await Module();
     await model.solve(highs);
     
-    console.log(JSON.stringify(entries))
+    // console.log(JSON.stringify(entries))
     let ms = entries.map((l) => (l.map((ll) => ll["value"])));
     this.ms = ms;
-    console.log(JSON.stringify(ms));
+    // console.log(JSON.stringify(ms));
     return ms;
 }
 
@@ -153,10 +153,10 @@ async structure() {
         }
         return paths;
     }
-    console.log(JSON.stringify(this.ms));
+    // console.log(JSON.stringify(this.ms));
     var structure = build_paths(this._focus,this.ms,this.n_voters,this.n_candidates);
     this._structure = structure;
-    console.log(JSON.stringify(structure));
+    // console.log(JSON.stringify(structure));
     return structure;
 }
 

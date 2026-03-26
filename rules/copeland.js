@@ -13,7 +13,7 @@ constructor(profile) {
 
 explanation() {
     this._structure = this.structure();
-    console.log(this._structure);
+    // console.log(this._structure);
 
     function displaySum(l) {
         var text = "";

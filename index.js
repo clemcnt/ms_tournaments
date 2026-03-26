@@ -38,10 +38,6 @@ function createRuleChoice(){
         const label = document.createElement('label');
         label.htmlFor = rules_id[i];
         label.textContent = rules_name[i];
-        if (first) {
-            input.checked = true;
-            first = false;
-        }
         container.appendChild(input);
         container.appendChild(label);
         fieldset.appendChild(container);
@@ -55,6 +51,10 @@ function createRuleChoice(){
 }
 
 createRuleChoice();
+
+document.getElementById('rulesForm').querySelectorAll('input[type="radio"]').forEach(radio => {
+  radio.addEventListener('change', computeWinners);
+});
 
 function candidateName(i) {
     let ACharCode = 65;
@@ -90,7 +90,7 @@ function createProfile(){
     for (var i=1; i<n_candidates+1; i++) {
         var cell = document.createElement('TD');
         cell.width = 10; cell.height = 10;  cell.align = "center";
-        cell.setAttribute("id",`0${i}`);
+        cell.setAttribute("id",`0_${i}`);
         var text = document.createTextNode(candidateName(i-1));
         cell.appendChild(text);
         row.appendChild(cell);
@@ -104,7 +104,7 @@ function createProfile(){
         // first cell of the row
         var cell = document.createElement('TD');
         cell.width = 10; cell.height = 10;  cell.align = "center";
-        cell.setAttribute("id",`${i}0`);
+        cell.setAttribute("id",`${i}_0`);
         var text = document.createTextNode(candidateName(i-1));
         cell.appendChild(text);
         row.appendChild(cell);
@@ -113,7 +113,7 @@ function createProfile(){
         for (var j=1; j<n_candidates+1; j++) {
             var cell = document.createElement('TD');
             cell.width = 10; cell.height = 10;  cell.align = "center";
-            cell.setAttribute("id",`${i}${j}`);
+            cell.setAttribute("id",`${i}_${j}`);
             if (j==i) {
                 // diagonal elements
                 cell.style.backgroundColor = "gray";
@@ -142,9 +142,9 @@ function randomFill() {
     for (let i=1; i<n_candidates+1; i++){
         for (let j=i+1; j<n_candidates+1; j++){
             let value = Math.floor(Math.random()*(n_voters+1));
-            let entry = document.getElementById(`${i}${j}`);
+            let entry = document.getElementById(`${i}_${j}`);
             entry.firstChild.value = value;
-            let opposit = document.getElementById(`${j}${i}`);
+            let opposit = document.getElementById(`${j}_${i}`);
             opposit.firstChild.value = n_voters - value;
         }
     }
@@ -238,6 +238,8 @@ function checkProfile(profile){
         console.log("checkProfile error: The profile is not a #candidates*#candidate matrix.")
         return false;
     } else {
+        
+        console.log(profile)
         var complete = true
         var i = 0;
         var j;
@@ -245,33 +247,37 @@ function checkProfile(profile){
             j = i+1;
             while ( j<n_candidates && complete) {
                 complete = ((profile[i][j] + profile[j][i]) == n_voters);
+                if (!complete) {console.log(i)
+        console.log(j)}
                 j++;
             }
             i++;
         }
+        console.log(i)
+        console.log(j)
     }
     if (!complete) {
         console.log("checkProfile error: The profile is not a complete #voters-weighted tournament,\n i.e., m[i][j] + m[j][i] = #voters.")
+        console.log(i)
+        console.log(j)
         return false;
     } else {
         return true;
     }
 }
 
-function loadProfile(){
+async function loadProfile(){
     var temp_profile=[...Array(n_candidates)].map(_=>Array(n_candidates).fill(0));
     for (let i=0; i<n_candidates; i++) {
         for (let j=0; j<n_candidates; j++) {
-            var cellID = `${i+1}${j+1}`;
-            var cell = document.getElementById(cellID);
             if (i!=j)
             {
-                var value = cell.firstChild.value;
+                var value = document.getElementById(`${i+1}_${j+1}`).firstChild.value;
                 temp_profile[i][j]=parseInt(value);
             }
         }
     }
-    //console.log(JSON.stringify(temp_profile));
+    console.log(JSON.stringify(temp_profile));
     if (checkProfile(temp_profile)) {
         profile = temp_profile;
         console.log("loadProafile: profile loaded successfully")
@@ -436,17 +442,17 @@ function displayNeighborhood(graph_name, struct, winner) {
         for (let j=0; j<struct[i].length; j++) {
             cy_tournament.add({
                 group: 'nodes',
-                data: { id: `${i}${struct[i][j][0]}`, name: candidateName(struct[i][j][0]), parent: `parent${i}`}
+                data: { id: `${i}_${struct[i][j][0]}`, name: candidateName(struct[i][j][0]), parent: `parent${i}`}
             })
             if (i==winner) {
                 cy_tournament.add({
                     group: 'edges',
-                    data: {source: `${i}${struct[i][j][0]}`, target: i, weight:struct[i][j][1], toDel: true}
+                    data: {source: `${i}_${struct[i][j][0]}`, target: i, weight:struct[i][j][1], toDel: true}
                 })
             } else {
                 cy_tournament.add({
                     group: 'edges',
-                    data: {source: `${i}${struct[i][j][0]}`, target: i, weight:struct[i][j][1]}
+                    data: {source: `${i}_${struct[i][j][0]}`, target: i, weight:struct[i][j][1]}
                 })
             }
             
@@ -454,7 +460,6 @@ function displayNeighborhood(graph_name, struct, winner) {
     }
 
     var parentNodes = cy_tournament.nodes(':parent');
-    console.log(parentNodes)
 
     parentNodes.forEach(parent => {
         const layout = parent.descendants().layout({
@@ -471,7 +476,7 @@ function displayNeighborhood(graph_name, struct, winner) {
         if (struct[winner][j][1] > 0) {
             cy_tournament.add({
                 group: 'edges',
-                data: {source: winner, target: `${winner}${struct[winner][j][0]}`, weight:struct[winner][j][1]}
+                data: {source: winner, target: `${winner}_${struct[winner][j][0]}`, weight:struct[winner][j][1]}
             })
         }
     }
@@ -551,8 +556,10 @@ function createTournament(){
 
 
 document.getElementById("loadBtn")
-  .addEventListener("click", function(){loadProfile()
-     createTournament()});
+  .addEventListener("click", async function(){loadProfile();
+     await createTournament(); document.getElementById('rulesForm').querySelectorAll('input[type="radio"]').forEach(radio => {
+  radio.checked = false;
+});});
 
 var winners;
 
@@ -581,9 +588,6 @@ function createWinnerChoice(new_winners){
             input.name = 'winner';
             input.value = w;
             input.id = "candidate" + w.toString();
-            if (i==0) {
-                input.checked = true;
-            }
 
             const label = document.createElement('label');
             label.htmlFor = w;
@@ -600,47 +604,50 @@ function createWinnerChoice(new_winners){
             element.appendChild(form);
         }
     }
+
+    document.querySelectorAll('input[name="winner"]').forEach(radio => {
+        radio.addEventListener("change", async function(){computeExplanation()
+        await createMS()});
+    });
 }
 
 createWinnerChoice([]);
 
 var election;
 
-function computeWinners(){
+const ruleMap = {
+  tc: Topcycle,
+  uc: Uncoveredset,
+  co: Copeland,
+  bo: Borda,
+  mm: Maximin,
+  wuc: Weighteduncoveredset
+};
+
+async function computeWinners() {
     if (!loadProfile()) {
         console.log("computeWinner error: no profile loaded");
-    } else {
-        const selected = document.querySelector('input[name="rule"]:checked').value;
+        return;
+    }
 
-        if (!selected) {
-            console.log("computeWinners error: no rule selected");
-        } else {
-            //console.log(selected);
-            if (selected=="tc") {
-                election = new Topcycle(profile);
-            } else if (selected=="uc") {
-                election = new Uncoveredset(profile);
-            } else if (selected=="co") {
-                election = new Copeland(profile);
-            } else if (selected=="bo") {
-                election = new Borda(profile);
-            } else if (selected=="mm") {
-                election = new Maximin(profile);
-            } else if (selected=="wuc") {
-                election = new Weighteduncoveredset(profile);
-            } else {
-                console.log("computeWinner error: unkown rule");
-            }
+    const selectedInput = document.querySelector('input[name="rule"]:checked');
+    if (!selectedInput) {
+        console.log("ComputeWinners error: No rule is selected");
+        return;
+    }
 
-            var temp_winners = election.winners();
-            createWinnerChoice(temp_winners)
-        }
-    }   
+    const RuleClass = ruleMap[selectedInput.value];
+
+    if (!RuleClass) {
+        console.log("Unknown rule");
+        return;
+    }
+
+    election = new RuleClass(profile);
+    const winners = await election.winners();
+
+    createWinnerChoice(winners);
 }
-
-
-document.getElementById("computeWinnersBtn")
-    .addEventListener("click", computeWinners);
 
 
 async function computeExplanation() {
@@ -689,5 +696,5 @@ async function createMS(){
 }
 
 document.getElementById("explainBtn")
-    .addEventListener("click", async function(){computeExplanation()
-     await createMS()});
+    .addEventListener("click", async function(){
+     await createMS(); await computeExplanation()});

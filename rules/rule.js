@@ -16,12 +16,13 @@ winners() {
     return false; 
 }
 
-focus(w) {
+async focus(w) {
     if (!this._winners){
         this._winners = this._winners(this.profile);
     }
     if (this._winners.includes(w)){
         this._focus = w;
+        this.ms = undefined;
         return w;
     } else {
         return console.error("focus error: " + w + " is not in the winner set");
