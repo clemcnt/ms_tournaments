@@ -173,9 +173,21 @@ async explanation() {
 
     let explanation = [];
     explanation.push(this._focus + " is a Maximin winner because: ");
-    // console.log(JSON.stringify(this._structure));
-    let min = Math.min(...this._structure[this._focus][1]);
-    // console.log(min);
+    console.log(JSON.stringify(this._structure));
+
+    function findMin(l) {
+        if (l.length == 0) {
+            console.log("displayMin error: empty list")
+        } else {
+            var m = l[0][1]
+            for (let i=1; i<l.length; i++) {
+                if (m >= l[i][1]) {
+                    m = l[i][1];
+                }
+            }
+        return m
+        }
+    }
 
     function displayMin(l) {
         var text = "min(";
@@ -190,7 +202,7 @@ async explanation() {
         }
     }
 
-    explanation.push("- " + this._focus + " wins at least " + min + " = " + displayMin(this._structure[this._focus]) + " pairwise comparisons in each head-to-head");
+    explanation.push("- " + this._focus + " wins at least " + findMin(this._structure[this._focus]) + " = " + displayMin(this._structure[this._focus]) + " pairwise comparisons in each head-to-head");
     
     function explain_losers(neighborhoods,w,n,m){
         for (let i=0; i<m; i++) {
